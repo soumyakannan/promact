@@ -27,6 +27,7 @@
 #'   protein other than fluorescent (i.e. luciferase, beta-galactosidase, etc.),
 #'   3 = fluorescent protein (i.e. GFP, RFP, etc). For more information, see
 #'   references. Defaults to 3.
+#' @param use_mt Option to use (True) or not (False) monotone spline for biomass
 #'
 #' @return Returns a list \code{L} with \code{L$t} the time series input by the
 #'   user and \code{L$promact} the calculated promoter activities at these
@@ -44,7 +45,8 @@
 #############################################################################
 
 DIPA <- function(x, t.f, f.data, t.b, b.data, m  = log(2)/0.45,
-                              d  = log(2)/0.5, beta = 1, d.r = 1, data.type = 3) {
+                              d  = log(2)/0.5, beta = 1, d.r = 1, data.type = 3,
+                              use_mt = TRUE) {
 
   # Calculate average step size of data points
   step_size <- mean(diff(t.f))
@@ -104,6 +106,13 @@ DIPA <- function(x, t.f, f.data, t.b, b.data, m  = log(2)/0.45,
   # If monotonic spline gives an error, use the usual one instead & construct
   # smoothed biomass
   if (class(try_mt) == "try-error") {
+    g <- smooth.spline(x=t.b, y=b.data, cv=FALSE)
+    if (g$spar > n_spar + 0.1) {
+      g <- smooth.spline(x=t.b, y=b.data, spar=n_spar + 0.1)
+    }
+    g.t <- predict(object=g, x)$y
+  }
+  else if (use_mt == FALSE) {
     g <- smooth.spline(x=t.b, y=b.data, cv=FALSE)
     if (g$spar > n_spar + 0.1) {
       g <- smooth.spline(x=t.b, y=b.data, spar=n_spar + 0.1)
