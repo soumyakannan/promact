@@ -5,7 +5,7 @@ Version: 0.1.0
 Author: Soumya Kannan
 Maintainer: Soumya Kannan <soumyak@mit.edu>
 Description: promact provides a function to calculate promoter activity as described in PUBLICATION NAME. 
-License: GPL (>= 3)
+License: MIT + file LICENSE
 Imports: fda, pspline
 Encoding: UTF-8
 LazyData: true
